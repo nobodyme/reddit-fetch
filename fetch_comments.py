@@ -24,7 +24,7 @@ def get_response():
 
 def main():
 
-  output_filehandle = open("posts.txt",
+  output_filehandle = open("comments.txt",
                            mode = 'w',
                            encoding = 'utf8')
   top_level_comments = get_response()
