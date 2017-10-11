@@ -7,5 +7,5 @@ For now it fetches the first 50 top level comments, the post is supplied via the
 
   - Then clone the repository: `git clone https://github.com/nobodyme/reddit-comment-fetch.git`
   - cd into the directory: `cd reddit-comment-fetch`
-  - Run the install script with: `python3 fetch_comments.py *your-post-link*`</br>
+  - Run the script with: `python3 fetch_comments.py *your-post-link*`</br>
   eg: `python3 fetch_comments.py https://www.reddit.com/r/AskReddit/comments/75goki/whats_a_movie_to_watch_when_you_want_a_good_cry/`
