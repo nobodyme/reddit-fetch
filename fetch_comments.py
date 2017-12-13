@@ -1,24 +1,26 @@
 #!/usr/bin/python3
-
+from fake_useragent import UserAgent
 import argparse
 import sys
 import json
 import requests
+import pprint
 		
 def get_response():
-		
   url = sys.argv[1]
-  response = requests.get(url+'.json',headers = {'User-agent':'bot'})
-		
+  ua = UserAgent()
+  headers = {'User-agent': ua.random }
+  print("Using header: ", headers)
+  response = requests.get(url+'.json',headers=headers)
   if not response.ok:
     print ("Error ", response.status_code)
     exit(response.status_code)
   
-  post_fetch = list()      
+  post_fetch = list()
   data = response.json()
   title = data[0]['data']['children'][0]['data']['title']
   post_fetch.append(title+'\n\n')
-  for i in range(0,50):
+  for i in range(0,len(data)):
     post_fetch.append(data[1]['data']['children'][i]['data']['body']+'\n')
   return post_fetch
 
