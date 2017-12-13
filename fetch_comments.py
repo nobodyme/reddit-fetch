@@ -18,9 +18,10 @@ def get_response():
   
   post_fetch = list()
   data = response.json()
+  # pprint.pprint(data)
   title = data[0]['data']['children'][0]['data']['title']
   post_fetch.append(title+'\n\n')
-  for i in range(0,len(data)):
+  for i in range(0,len(data[1]['data']['children'])):
     post_fetch.append(data[1]['data']['children'][i]['data']['body']+'\n')
   return post_fetch
 
