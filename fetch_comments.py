@@ -18,8 +18,9 @@ def get_response():
   data = response.json()
   title = data[0]['data']['children'][0]['data']['title']
   post_fetch.append(title+'\n\n')
-  for i in range(0,50):
-    post_fetch.append(data[1]['data']['children'][i]['data']['body']+'\n')
+  for i in range(0,len(data[1]['data']['children'])):
+    if 'body' in data[1]['data']['children'][i]['data'] and data[1]['data']['children'][i]['data']['body'] != '[deleted]':
+      post_fetch.append(str(i+1) + '. ' + data[1]['data']['children'][i]['data']['body']+'\n')
   return post_fetch
 
 def main():
