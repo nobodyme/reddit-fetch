@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from fake_useragent import UserAgent
 import argparse
 import json
 import os
@@ -7,12 +8,11 @@ import re
 import requests
 
 
-
 def get_valid_filename(s):
     s = str(s).strip().replace(' ', '_')
     return re.sub(r'(?u)[^-\w.]', '', s)
 
-
+ua = UserAgent()
 parser = argparse.ArgumentParser(description='Fetch images from a subreddit')
 parser.add_argument('-n', '--number', type=int, metavar='', default=50,
                     help='Number of images to be downloaded (default=50)')
@@ -25,7 +25,7 @@ args = parser.parse_args()
 url = 'https://www.reddit.com/r/'
 url = url + args.subreddit + '/top/.json?sort=top&t=' + \
     args.top + '&limit=' + str(args.number)
-response = requests.get(url, headers={'User-agent': 'firefox'})
+response = requests.get(url, headers={'User-agent': ua.random})
 
 if not response.ok:
     print("Error check the name of the subreddit", response.status_code)
