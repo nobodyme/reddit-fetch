@@ -27,7 +27,6 @@ A python program to fetch the pictures of a given subreddit, wrote it when I was
 
   - Then clone the repository: `git clone https://github.com/nobodyme/reddit-fetch.git`
   - cd into the directory: `cd reddit-fetch`
-  - Run the script with: `python3 grab_pictures.py -s *name-of-the-subreddit* -n *number-of-photos*`</br>
-  eg: `python3 fetch_comments.py -s itookapicture -n 100`
-
-  It grabs the pictures and puts them in a folder with the name of the subreddit.
+  - Run the script with: `python3 grab_pictures.py -s *name-of-the-subreddit* -n *number-of-photos(optional)* -t *top posts of [day, week, month, year, all](optional)*`</br>
+  eg: `python3 fetch_comments.py -s itookapicture -n 100 -t all`
+  - Check for help with `python3 grab_pictures.py -h`
