@@ -11,7 +11,7 @@ import sys
 
 def get_valid_filename(s):
     s = str(s).strip().replace(' ', '_')
-    return re.sub(r'(?u)[^-\w.]', '', s)
+    return re.sub(r'(?u)[^-\w.]', '', s)[:200]
 
 
 def erase_previous_line():
