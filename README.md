@@ -24,6 +24,7 @@ This then gives the list of just the names of everything that you can save.
 ## grab-pictures
 
 A python program to fetch the pictures of a given subreddit, wrote it when I was looking for some wallpapers to download. It grabs the pictures and puts them in a folder under the name of the supplied subreddit.
+You can find the related [medium article here]((https://medium.com/@naveenkumarspa/using-python-for-your-desktop-wallpaper-collection-focused-on-beginners-a66451d25660)).
 
 ### Run
 
