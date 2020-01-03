@@ -54,7 +54,7 @@ def get_pictures_from_subreddit(data, subreddit, location):
 
 def main():
     colorama.init()
-    ua = UserAgent()
+    ua = UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
     parser = argparse.ArgumentParser(
         description='Fetch images from a subreddit (eg: python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all)')
     parser.add_argument('-s', '--subreddit', nargs='+', type=str, metavar='',
