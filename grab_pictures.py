@@ -16,8 +16,17 @@ def erase_previous_line():
     sys.stdout.write("\033[K")
 
 
-def get_pictures_from_subreddit(data, subreddit, location):
+def get_pictures_from_subreddit(data, subreddit, location, nsfw):
     for i in range(len(data)):
+        if data[i]['data']['over_18']:
+            # if nsfw post and you only want sfw
+            if nsfw == 'n':
+                continue
+        else:
+            # if sfw post and you only want nsfw
+            if nsfw == 'x':
+                continue
+
         current_post = data[i]['data']
         image_url = current_post['url']
         if '.png' in image_url:
@@ -58,6 +67,9 @@ def main():
                         default='week', help='Optionally specify whether top posts of [day, week, month, year or all] (default=week)')
     parser.add_argument('-l', '--location', type=str, metavar='', default='',
                         help='Optionally specify the directory/location to be downloaded')
+    parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
+                        help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
+
     args = parser.parse_args()
     global after
     after = ''
@@ -87,7 +99,7 @@ def main():
             erase_previous_line()
             print('downloading pictures from r/' + args.subreddit[j] + '..')
             data = response.json()['data']['children']
-            get_pictures_from_subreddit(data, args.subreddit[j], location)
+            get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw)
             erase_previous_line()
             print('Downloaded pictures from r/' + args.subreddit[j])
 
