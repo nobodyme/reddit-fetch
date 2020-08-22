@@ -1,13 +1,6 @@
 #!/usr/bin/python3
-
+import argparse, colorama, os, re, requests, sys
 from fake_useragent import UserAgent
-import argparse
-import colorama
-import json
-import os
-import re
-import requests
-import sys
 
 
 def get_valid_filename(s):
@@ -23,8 +16,17 @@ def erase_previous_line():
     sys.stdout.write("\033[K")
 
 
-def get_pictures_from_subreddit(data, subreddit, location):
+def get_pictures_from_subreddit(data, subreddit, location, nsfw):
     for i in range(len(data)):
+        if data[i]['data']['over_18']:
+            # if nsfw post and you only want sfw
+            if nsfw == 'n':
+                continue
+        else:
+            # if sfw post and you only want nsfw
+            if nsfw == 'x':
+                continue
+
         current_post = data[i]['data']
         image_url = current_post['url']
         if '.png' in image_url:
@@ -59,39 +61,47 @@ def main():
         description='Fetch images from a subreddit (eg: python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all)')
     parser.add_argument('-s', '--subreddit', nargs='+', type=str, metavar='',
                         required=True, help='Exact name of the subreddits you want to grab pictures')
-    parser.add_argument('-n', '--number', type=int, metavar='', default=50,
-                        help='Optionally specify number of images to be downloaded (default=50)')
+    parser.add_argument('-n', '--number', type=int, metavar='', default=100,
+                        help='Optionally specify number of images to be downloaded (default=100, maximum=1000)')
     parser.add_argument('-t', '--top', type=str, metavar='', choices=['day', 'week', 'month', 'year', 'all'],
                         default='week', help='Optionally specify whether top posts of [day, week, month, year or all] (default=week)')
-    parser.add_argument('-loc', '--location', type=str, metavar='', default='',
+    parser.add_argument('-l', '--location', type=str, metavar='', default='',
                         help='Optionally specify the directory/location to be downloaded')
+    parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
+                        help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
+
     args = parser.parse_args()
+    global after
+    after = ''
+    for i in range(0, args.number // 100):
+        for j in range(len(args.subreddit)):
+            print('starting download ' + str(i + 1))
+            print('Connecting to r/' + args.subreddit[j])
+            url = 'https://www.reddit.com/r/' + args.subreddit[j] + '/top/.json?sort=top&t=' + \
+                args.top + '&limit=' + str(args.number)
+            if after != '':
+                url = url + '&after=' + after
+            response = requests.get(url, headers={'User-agent': ua.random})
+            after = response.json()['data']['after']
+            if os.path.exists(args.location):
+                location = os.path.join(args.location, args.subreddit[j])
+            else:
+                print('Given path does not exist, try without the location parameter to default to the current directory')
+                exit()
 
-    for j in range(len(args.subreddit)):
-        print('Connecting to r/' + args.subreddit[j])
-        url = 'https://www.reddit.com/r/' + args.subreddit[j] + '/top/.json?sort=top&t=' + \
-            args.top + '&limit=' + str(args.number)
-        response = requests.get(url, headers={'User-agent': ua.random})
-        if os.path.exists(args.location):
-            location = os.path.join(args.location, args.subreddit[j])
-        else:
-            print('Given path does not exist, try without the location parameter to default to the current directory')
-            exit()
+            if not response.ok:
+                print("Error check the name of the subreddit", response.status_code)
+                exit()
 
-        if not response.ok:
-            print("Error check the name of the subreddit", response.status_code)
-            exit()
-
-        if not os.path.exists(location):
-            os.mkdir(location)
-        # notify connected and downloading pictures from subreddit
-        erase_previous_line()
-        print('downloading pictures from r/' + args.subreddit[j] + '..')
-
-        data = response.json()['data']['children']
-        get_pictures_from_subreddit(data, args.subreddit[j], location)
-        erase_previous_line()
-        print('Downloaded pictures from r/' + args.subreddit[j])
+            if not os.path.exists(location):
+                os.mkdir(location)
+            # notify connected and downloading pictures from subreddit
+            erase_previous_line()
+            print('downloading pictures from r/' + args.subreddit[j] + '..')
+            data = response.json()['data']['children']
+            get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw)
+            erase_previous_line()
+            print('Downloaded pictures from r/' + args.subreddit[j])
 
 
 if __name__ == '__main__':
