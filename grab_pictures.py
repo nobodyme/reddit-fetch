@@ -8,13 +8,11 @@ def get_valid_filename(s):
     s = str(s).strip().replace(' ', '_')
     return re.sub(r'[^\w.]', '', s)[:200]
 
-
 def erase_previous_line():
     # cursor up one line
     sys.stdout.write("\033[F")
     # clear to the end of the line
     sys.stdout.write("\033[K")
-
 
 def get_pictures_from_subreddit(data, subreddit, location, nsfw):
     for i in range(len(data)):
@@ -52,7 +50,6 @@ def get_pictures_from_subreddit(data, subreddit, location, nsfw):
                 output_filehandle.write(image.content)
             except:
                 pass
-
 
 def main():
     colorama.init()

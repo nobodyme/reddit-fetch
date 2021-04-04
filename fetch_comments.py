@@ -15,13 +15,11 @@ def get_valid_filename(s):
     s = str(s).strip().replace(' ', '_')
     return re.sub(r'[^\w.]', '', s)[:200]
 
-
 def erase_previous_line():
     # cursor up one line
     sys.stdout.write("\033[F")
     # clear to the end of the line
     sys.stdout.write("\033[K")
-
 
 def get_response(url, ua):
     response = requests.get(url, headers={'User-agent': ua.random})
@@ -44,7 +42,6 @@ def get_response(url, ua):
             post_fetch.append(str(i+1) + '. ' +
                               comment[i]['data']['body']+'\n')
     return post_fetch
-
 
 def main():
     colorama.init()
