@@ -85,7 +85,7 @@ def main():
             url = 'https://www.reddit.com/r/' + args.subreddit[j] + '/top/.json?sort=top&t=' + \
                 args.top + '&limit=' + str(args.number)
 
-            if after != '':
+            if after != '' and after != None:
                 url = url + '&after=' + after
 
             response = requests.get(url, headers={'User-agent': ua.random})
