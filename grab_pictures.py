@@ -61,11 +61,11 @@ def main():
         description='Fetch images from a subreddit (eg: python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all)')
     parser.add_argument('-s', '--subreddit', nargs='+', type=str, metavar='',
                         required=True, help='Exact name of the subreddits you want to grab pictures')
-    parser.add_argument('-n', '--number', type=int, metavar='', default=100,
-                        help='Optionally specify number of images to be downloaded (default=100, maximum=1000)')
+    parser.add_argument('-n', '--number', type=int, metavar='', default=10,
+                        help='Optionally specify number of images to be downloaded (default=10, maximum=1000)')
     parser.add_argument('-t', '--top', type=str, metavar='', choices=['day', 'week', 'month', 'year', 'all'],
                         default='week', help='Optionally specify whether top posts of [day, week, month, year or all] (default=week)')
-    parser.add_argument('-l', '--location', type=str, metavar='', default='',
+    parser.add_argument('-loc', '--location', type=str, metavar='', default='.',
                         help='Optionally specify the directory/location to be downloaded')
     parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
                         help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
@@ -73,16 +73,28 @@ def main():
     args = parser.parse_args()
     global after
     after = ''
-    for i in range(0, args.number // 100):
+
+    number = args.number // 100
+
+    if number == 0:
+        number = 1
+
+    for i in range(0, number):
         for j in range(len(args.subreddit)):
+
             print('starting download ' + str(i + 1))
             print('Connecting to r/' + args.subreddit[j])
+
             url = 'https://www.reddit.com/r/' + args.subreddit[j] + '/top/.json?sort=top&t=' + \
                 args.top + '&limit=' + str(args.number)
+
             if after != '':
                 url = url + '&after=' + after
+
             response = requests.get(url, headers={'User-agent': ua.random})
+
             after = response.json()['data']['after']
+
             if os.path.exists(args.location):
                 location = os.path.join(args.location, args.subreddit[j])
             else:
@@ -95,11 +107,14 @@ def main():
 
             if not os.path.exists(location):
                 os.mkdir(location)
+
             # notify connected and downloading pictures from subreddit
             erase_previous_line()
             print('downloading pictures from r/' + args.subreddit[j] + '..')
+
             data = response.json()['data']['children']
             get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw)
+
             erase_previous_line()
             print('Downloaded pictures from r/' + args.subreddit[j])
 
