@@ -1,27 +1,12 @@
 #!/usr/bin/python3
 
+import argparse, colorama, os, requests
 from fake_useragent import UserAgent
-import argparse
-import colorama
-import json
-import re
-import requests
-import sys
-import os
+
+from utils import get_valid_filename, erase_previous_line
 
 
-def get_valid_filename(s):
-    ''' strips out special characters and replaces spaces with underscores, len 200 to avoid file_name_too_long error '''
-    s = str(s).strip().replace(' ', '_')
-    return re.sub(r'[^\w.]', '', s)[:200]
-
-def erase_previous_line():
-    # cursor up one line
-    sys.stdout.write("\033[F")
-    # clear to the end of the line
-    sys.stdout.write("\033[K")
-
-def get_response(url, ua):
+def get_comments(url, ua):
     response = requests.get(url, headers={'User-agent': ua.random})
 
     if not response.ok:
@@ -63,7 +48,7 @@ def main():
     if args.sort == 'best':
         args.sort = 'confidence'
 
-    top_level_comments = get_response(
+    top_level_comments = get_comments(
         url + args.sort, ua)
 
     filename = get_valid_filename(top_level_comments[0]) + "_comments.txt"
