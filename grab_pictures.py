@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 import argparse, colorama, os, requests
-from fake_useragent import UserAgent
 
-from utils import get_valid_filename, erase_previous_line
+from utils import get_valid_filename, erase_previous_line, get_userAgent
 
 
 def get_pictures_from_subreddit(data, subreddit, location, nsfw):
@@ -59,7 +58,7 @@ def main():
     args = parser.parse_args()
 
     # initializing userAgent
-    ua = UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
+    ua = get_userAgent()
 
     global after
     after = ''
