@@ -53,7 +53,6 @@ def get_pictures_from_subreddit(data, subreddit, location, nsfw):
 
 def main():
     colorama.init()
-    ua = UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
     parser = argparse.ArgumentParser(
         description='Fetch images from a subreddit (eg: python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all)')
     parser.add_argument('-s', '--subreddit', nargs='+', type=str, metavar='',
@@ -62,12 +61,15 @@ def main():
                         help='Optionally specify number of images to be downloaded (default=10, maximum=1000)')
     parser.add_argument('-t', '--top', type=str, metavar='', choices=['day', 'week', 'month', 'year', 'all'],
                         default='week', help='Optionally specify whether top posts of [day, week, month, year or all] (default=week)')
-    parser.add_argument('-loc', '--location', type=str, metavar='', default='.',
+    parser.add_argument('-loc', '--location', type=str, metavar='', default=os.getcwd() + '/images',
                         help='Optionally specify the directory/location to be downloaded')
     parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
                         help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
-
     args = parser.parse_args()
+
+    # initializing userAgent
+    ua = UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
+
     global after
     after = ''
 
@@ -92,18 +94,13 @@ def main():
 
             after = response.json()['data']['after']
 
-            if os.path.exists(args.location):
-                location = os.path.join(args.location, args.subreddit[j])
-            else:
-                print('Given path does not exist, try without the location parameter to default to the current directory')
-                exit()
-
             if not response.ok:
                 print("Error check the name of the subreddit", response.status_code)
                 exit()
 
+            location = os.path.join(args.location, args.subreddit[j])
             if not os.path.exists(location):
-                os.mkdir(location)
+                os.makedirs(location)
 
             # notify connected and downloading pictures from subreddit
             erase_previous_line()

@@ -45,16 +45,18 @@ def get_response(url, ua):
 
 def main():
     colorama.init()
-    ua = UserAgent()
     parser = argparse.ArgumentParser(
         description='Fetch top level comments from a reddit post (eg: python3 fetch_comments.py -l https://www.reddit.com/r/AskReddit/comments/75goki/whats_a_movie_to_watch_when_you_want_a_good_cry/)')
     parser.add_argument('-l', '--link', type=str, metavar='',
                         required=True, help='Link of the post')
     parser.add_argument('-s', '--sort', type=str, metavar='', choices=[
                         'best', 'top', 'new'], default='confidence', help='Optionally specify order of sort [best or top or new]')
-    parser.add_argument('-loc', '--location', type=str, metavar='', default='',
+    parser.add_argument('-loc', '--location', type=str, metavar='', default=os.getcwd() + '/comments',
                         help='Optionally specify the directory/location to be downloaded')
     args = parser.parse_args()
+
+    # initializing userAgent
+    ua = UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
 
     print('Connecting to reddit..')
     url = args.link + '.json?sort='
@@ -66,16 +68,10 @@ def main():
 
     filename = get_valid_filename(top_level_comments[0]) + "_comments.txt"
 
-    if args.location:
-        if os.path.exists(args.location):
-            location = os.path.join(
-                args.location, filename)
-        else:
-            print('Given path does not exist, try without the location parameter to default to the current directory')
-            exit(1)
-    else:
-        location = filename
+    if not os.path.exists(args.location):
+        os.makedirs(args.location)
 
+    location = os.path.join(args.location, filename)
     output_filehandle = open(location, mode='w', encoding='utf8')
     output_text = '\n'.join(top_level_comments)
     output_filehandle.write(output_text)
