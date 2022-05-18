@@ -4,7 +4,9 @@ import argparse, colorama, os, requests
 from utils import get_valid_filename, erase_previous_line, get_userAgent
 
 
-def get_pictures_from_subreddit(data, subreddit, location, nsfw):
+def get_pictures_from_subreddit(data, subreddit, location, nsfw, filter_texts):
+    if filter_texts is None:
+        filter_texts = []
     for i in range(len(data)):
         if data[i]['data']['over_18']:
             # if nsfw post and you only want sfw
@@ -16,6 +18,11 @@ def get_pictures_from_subreddit(data, subreddit, location, nsfw):
                 continue
 
         current_post = data[i]['data']
+        title = current_post['title'].lower()
+
+        if not any(map(lambda x: x.lower() in title, filter_texts)):
+            continue
+
         image_url = current_post['url']
         if '.png' in image_url:
             extension = '.png'
@@ -55,6 +62,8 @@ def main():
                         help='Optionally specify the directory/location to be downloaded')
     parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
                         help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
+    parser.add_argument('-f', '--filter-texts', nargs='+', type=str, metavar='',
+                        required=False, help='One or more of the given filter texts need to be included in title of the images (e.g. "digital").')
     args = parser.parse_args()
 
     # initializing userAgent
@@ -97,7 +106,7 @@ def main():
             print('downloading pictures from r/' + args.subreddit[j] + '..')
 
             data = response.json()['data']['children']
-            get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw)
+            get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw, args.filter_texts)
 
             erase_previous_line()
             print('Downloaded pictures from r/' + args.subreddit[j])
