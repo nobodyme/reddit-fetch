@@ -31,6 +31,6 @@ You can find the [article which explains the process to beginners](https://nobod
   - Clone the repository: `git clone https://github.com/nobodyme/reddit-fetch.git` or download
   - cd into the directory: `cd reddit-fetch`
   - pip3 install -r requirements.txt
-  - Run the script with: `python3 grab_pictures.py -s *name-of-the-subreddits* -n *number-of-photos(optional, defaults to 10)* -t *top posts of [day, week, month, year, all](optional)* -loc *directory-path(optional, defauts to current one)*`</br>
-  eg: `python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all`
+  - Run the script with: `python3 grab_pictures.py -s *name-of-the-subreddits* -n *number-of-photos(optional, defaults to 10)* -t *top posts of [day, week, month, year, all](optional)* -loc *directory-path(optional, defauts to current one)* -f *texts-to-use-to-filter-image-title(optional)*`</br>
+  eg: `python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all -f digital 3d`
   - Check for help with `python3 grab_pictures.py -h`
