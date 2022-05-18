@@ -3,6 +3,7 @@ env/
 !requirements.txt
 images/*
 comments/*
+.idea/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -83,6 +84,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+*.ipynb
 
 # IPython
 profile_default/
@@ -113,6 +115,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+.venv*
 env/
 venv/
 ENV/
