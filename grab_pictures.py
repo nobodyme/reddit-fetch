@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import argparse, colorama, os, requests
+import argparse, colorama, os, requests, sys
 
 from utils import get_valid_filename, erase_previous_line, get_userAgent
 
@@ -88,12 +88,12 @@ def main():
                 url = url + '&after=' + after
 
             response = requests.get(url, headers={'User-agent': ua.random})
+            
+            if not response.ok:
+                print(f'Error connecting to subreddit r/{args.subreddit[j]}. Please check the name of the subreddit {response.status_code}')
+                exit()
 
             after = response.json()['data']['after']
-
-            if not response.ok:
-                print("Error check the name of the subreddit", response.status_code)
-                exit()
 
             location = os.path.join(args.location, args.subreddit[j])
             if not os.path.exists(location):
