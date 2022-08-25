@@ -61,7 +61,7 @@ def main():
     parser.add_argument('-x', '--nsfw', type=str, metavar='', default='y',
                         help='Optionally specify the behavior for handling NSFW content. y=yes download, n=no skip nsfw, x=only download nsfw content')
     parser.add_argument('-f', '--filter-texts', nargs='+', type=str, metavar='',
-                        required=False, help='One or more of the given filter texts need to be included in title of the images (e.g. "digital").')
+                        required=False, help='Optionally specify one or more of the given filter texts need to be included in title of the images (e.g. "digital").')
     args = parser.parse_args()
 
     # initializing userAgent
