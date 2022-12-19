@@ -33,24 +33,24 @@ def get_pictures_from_subreddit(data, subreddit, location, nsfw, filter_texts):
             continue
 
         erase_previous_line()
-        print('downloading pictures from r/' + subreddit +
-              '.. ' + str((i*100)//len(data)) + '%')
+        print(f'downloading pictures from r/{subreddit}.. {str((i*100)//len(data))}%')
 
         # redirects = False prevents thumbnails denoting removed images from getting in
         image = requests.get(image_url, allow_redirects=False)
-        if(image.status_code == 200):
+        if image.status_code == 200:
             try:
                 output_filehandle = open(
-                    location + '/' + get_valid_filename(current_post['title']) + extension, mode='bx')
+                    f'{location}/{get_valid_filename(current_post["title"])}{extension}', mode='bx')
                 output_filehandle.write(image.content)
             except:
                 pass
+        
 
 def main():
     colorama.init()
     parser = argparse.ArgumentParser(
         description='Fetch images from a subreddit (eg: python3 grab_pictures.py -s itookapicture CozyPlaces -n 100 -t all)')
-    parser.add_argument('-s', '--subreddit', nargs='+', type=str, metavar='',
+    parser.add_argument('-s', '--subreddits', nargs='+', type=str, metavar='',
                         required=True, help='Exact name of the subreddits you want to grab pictures')
     parser.add_argument('-n', '--number', type=int, metavar='', default=10,
                         help='Optionally specify number of images to be downloaded (default=10, maximum=1000)')
@@ -76,38 +76,37 @@ def main():
         number = 1
 
     for i in range(0, number):
-        for j in range(len(args.subreddit)):
+        for subreddit in args.subreddits:
 
-            print('starting download ' + str(i + 1))
-            print('Connecting to r/' + args.subreddit[j])
+            print(f'starting download {str(i + 1)}')
+            print(f'Connecting to r/{subreddit}')
 
-            url = 'https://www.reddit.com/r/' + args.subreddit[j] + '/top/.json?sort=top&t=' + \
-                args.top + '&limit=' + str(args.number)
+            url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(args.number)}'
 
-            if after != '' and after != None:
-                url = url + '&after=' + after
+            if after:
+                url = f'{url}&after={after}'
 
             response = requests.get(url, headers={'User-agent': ua.random})
             
             if not response.ok:
-                print(f'Error connecting to subreddit r/{args.subreddit[j]}. Please check the name of the subreddit {response.status_code}')
+                print(f'Error connecting to subreddit r/{subreddit}. Please check the name of the subreddit {response.status_code}')
                 exit()
 
             after = response.json()['data']['after']
 
-            location = os.path.join(args.location, args.subreddit[j])
+            location = os.path.join(args.location, subreddit)
             if not os.path.exists(location):
                 os.makedirs(location)
 
             # notify connected and downloading pictures from subreddit
             erase_previous_line()
-            print('downloading pictures from r/' + args.subreddit[j] + '..')
+            print(f'downloading pictures from r/{subreddit}..')
 
             data = response.json()['data']['children']
-            get_pictures_from_subreddit(data, args.subreddit[j], location, args.nsfw, args.filter_texts)
+            get_pictures_from_subreddit(data, subreddit, location, args.nsfw, args.filter_texts)
 
             erase_previous_line()
-            print('Downloaded pictures from r/' + args.subreddit[j])
+            print(f'Downloaded pictures from r/{subreddit}')
 
 
 if __name__ == '__main__':
