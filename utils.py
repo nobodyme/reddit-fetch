@@ -9,9 +9,10 @@ def get_valid_filename(s):
 
 def erase_previous_line():
     # cursor up one line
-    sys.stdout.write("\033[F")
-    # clear to the end of the line
-    sys.stdout.write("\033[K")
+    # sys.stdout.write("\033[F")
+    # # clear to the end of the line
+    # sys.stdout.write("\033[K")
+    return None
 
 def get_userAgent():
     return UserAgent(fallback='Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11')
