@@ -87,7 +87,9 @@ def main():
         
         while total_pictures_downloaded < args.number:
             
-            url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(args.number + 10)}'
+            images_required = args.number - total_pictures_downloaded
+            # adds a 5% error rate -> i.e 5% chance that the image is deleted/removed and cannot be downloaded
+            url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(int(images_required * 1.05))}'
 
             if after:
                 url = f'{url}&after={after}'
