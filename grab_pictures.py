@@ -82,12 +82,12 @@ def main():
     ua = get_userAgent()
 
     global after
-    after = None
 
     for subreddit in args.subreddits:
         print(f'starting download')
         print(f'Connecting to r/{subreddit}')
         total_pictures_downloaded = 0
+        after = None
 
         while total_pictures_downloaded < args.number:
 
