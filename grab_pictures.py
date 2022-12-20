@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-import argparse, colorama, os, requests, sys
+import argparse
+import colorama
+import os
+import requests
 
 from utils import get_valid_filename, erase_previous_line, get_userAgent
 
@@ -34,7 +37,8 @@ def get_pictures_from_subreddit(data, subreddit, dir_path, nsfw, filter_texts, c
             continue
 
         erase_previous_line()
-        print(f'downloading pictures from r/{subreddit}.. {str((current_downloaded_count*100)//total_count_required)}%')
+        print(
+            f'downloading pictures from r/{subreddit}.. {str((current_downloaded_count*100)//total_count_required)}%')
 
         # redirects = False prevents thumbnails denoting removed images from getting in
         image = requests.get(image_url, allow_redirects=False)
@@ -52,8 +56,9 @@ def get_pictures_from_subreddit(data, subreddit, dir_path, nsfw, filter_texts, c
                 pass
             except Exception as error:
                 print(f'Error downloading images - {error}')
-        
+
     return current_downloaded_count
+
 
 def main():
     colorama.init()
@@ -78,15 +83,14 @@ def main():
 
     global after
     after = None
-    
 
     for subreddit in args.subreddits:
         print(f'starting download')
         print(f'Connecting to r/{subreddit}')
         total_pictures_downloaded = 0
-        
+
         while total_pictures_downloaded < args.number:
-            
+
             images_required = args.number - total_pictures_downloaded
             # adds a 5% error rate -> i.e 5% chance that the image is deleted/removed and cannot be downloaded
             url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(int(images_required * 1.05))}'
@@ -95,9 +99,10 @@ def main():
                 url = f'{url}&after={after}'
 
             response = requests.get(url, headers={'User-agent': ua.random})
-            
+
             if not response.ok:
-                print(f'Error connecting to subreddit r/{subreddit}. Please check the name of the subreddit {response.status_code}')
+                print(
+                    f'Error connecting to subreddit r/{subreddit}. Please check the name of the subreddit {response.status_code}')
                 exit()
 
             after = response.json()['data']['after']
@@ -107,11 +112,13 @@ def main():
                 os.makedirs(dir_path)
 
             data = response.json()['data']['children']
-            total_pictures_downloaded = get_pictures_from_subreddit(data, subreddit, dir_path, args.nsfw, args.filter_texts, total_pictures_downloaded, args.number)
+            total_pictures_downloaded = get_pictures_from_subreddit(
+                data, subreddit, dir_path, args.nsfw, args.filter_texts, total_pictures_downloaded, args.number)
 
         erase_previous_line()
         erase_previous_line()
-        print(f'Downloaded {total_pictures_downloaded} pictures from r/{subreddit}')
+        print(
+            f'Downloaded {total_pictures_downloaded} pictures from r/{subreddit}')
 
 
 if __name__ == '__main__':
