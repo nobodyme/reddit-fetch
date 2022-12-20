@@ -5,9 +5,6 @@ from utils import get_valid_filename, erase_previous_line, get_userAgent
 
 
 def get_pictures_from_subreddit(data, subreddit, dir_path, nsfw, filter_texts, current_downloaded_count, total_count_required):
-    print('Entering get pictures from subreddit') 
-
-    total_downloaded = current_downloaded_count
 
     for i in range(len(data)):
         if data[i]['data']['over_18']:
@@ -37,7 +34,7 @@ def get_pictures_from_subreddit(data, subreddit, dir_path, nsfw, filter_texts, c
             continue
 
         erase_previous_line()
-        print(f'downloading pictures from r/{subreddit}.. {str((i*100)//len(data))}%')
+        print(f'downloading pictures from r/{subreddit}.. {str((current_downloaded_count*100)//total_count_required)}%')
 
         # redirects = False prevents thumbnails denoting removed images from getting in
         image = requests.get(image_url, allow_redirects=False)
@@ -46,15 +43,17 @@ def get_pictures_from_subreddit(data, subreddit, dir_path, nsfw, filter_texts, c
                 output_filehandle = open(
                     f'{dir_path}/{get_valid_filename(current_post["title"])}{extension}', mode='bx')
                 output_filehandle.write(image.content)
-                total_downloaded += 1
+                current_downloaded_count += 1
 
-                if total_downloaded >= total_count_required:
-                    return total_downloaded
+                if current_downloaded_count >= total_count_required:
+                    return current_downloaded_count
 
+            except FileExistsError:
+                pass
             except Exception as error:
-                print(f'Error downloading images' - {error})
+                print(f'Error downloading images - {error}')
         
-    return total_downloaded
+    return current_downloaded_count
 
 def main():
     colorama.init()
@@ -86,9 +85,8 @@ def main():
         print(f'Connecting to r/{subreddit}')
         total_pictures_downloaded = 0
         
-        while total_pictures_downloaded <= args.number:
+        while total_pictures_downloaded < args.number:
             
-            print(f'total_pictures_downloaded - {total_pictures_downloaded} and required-amt - {args.number}')
             url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(args.number)}'
 
             if after:
@@ -106,13 +104,10 @@ def main():
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
 
-            # notify connected and downloading pictures from subreddit
-            erase_previous_line()
-            print(f'downloading pictures from r/{subreddit}..')
-
             data = response.json()['data']['children']
-            total_pictures_downloaded += get_pictures_from_subreddit(data, subreddit, dir_path, args.nsfw, args.filter_texts, total_pictures_downloaded, args.number)
+            total_pictures_downloaded = get_pictures_from_subreddit(data, subreddit, dir_path, args.nsfw, args.filter_texts, total_pictures_downloaded, args.number)
 
+        erase_previous_line()
         erase_previous_line()
         print(f'Downloaded {total_pictures_downloaded} pictures from r/{subreddit}')
 
