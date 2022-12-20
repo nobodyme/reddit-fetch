@@ -87,7 +87,7 @@ def main():
         
         while total_pictures_downloaded < args.number:
             
-            url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(args.number)}'
+            url = f'https://www.reddit.com/r/{subreddit}/top/.json?sort=top&t={args.top}&limit={str(args.number + 10)}'
 
             if after:
                 url = f'{url}&after={after}'
