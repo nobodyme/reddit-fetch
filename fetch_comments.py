@@ -1,6 +1,9 @@
 #!/usr/bin/python3
 
-import argparse, colorama, os, requests
+import argparse
+import colorama
+import os
+import requests
 
 from utils import get_valid_filename, erase_previous_line, get_userAgent
 
@@ -26,6 +29,7 @@ def get_comments(url, ua):
             post_fetch.append(str(i+1) + '. ' +
                               comment[i]['data']['body']+'\n')
     return post_fetch
+
 
 def main():
     colorama.init()
